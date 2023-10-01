@@ -2,12 +2,13 @@
 # 랜덤 손화살표를 추적하는 소년 ( 동영상 참고 )
 # ‘hand_arrow.png’ 이미지 사용 – 수업 실습 자료에 포함
 # 랜덤 위치에 손이 표시됨.(1점) O
-# 소년은 손을 따라감.(3점) o
-# 손에 도착하면, 다시 손이 자동으로 랜덤 위치로 이동함.(1점)
-# 캐릭터의 바라보는 방향(좌우)을 이동 방향과 일치시켜야 함.(1점)
+# 소년은 손을 따라감.(3점) O
+# 손에 도착하면, 다시 손이 자동으로 랜덤 위치로 이동함.(1점) 
+# 캐릭터의 바라보는 방향(좌우)을 이동 방향과 일치시켜야 함.(1점) O
 
 from pico2d import *
 import random
+import math
 
 TUK_WIDTH, TUK_HEIGHT = 800, 800
 
@@ -52,11 +53,11 @@ def arrow_draw():
 # 속력x시간이 나중위치가 되면 순간이동함 ex) (거리)*1.00%, 1을 넘어가면 도달할 수 없음 
 def Logic():
     global x1, y1, x2, y2
-
     t = 0.08  
     x1 += (x2 - x1) * t
     y1 += (y2 - y1) * t
-
+    if (calculate_distance(x1, y1, x2, y2)):
+        x2, y2 = random.randint(0, TUK_WIDTH - 1), random.randint(0, TUK_HEIGHT - 1) 
     set_direction()
     
 def set_direction():
@@ -66,14 +67,20 @@ def set_direction():
     elif x2 - x1 < 0:
         x_dir = -1
 
+
+def calculate_distance(x1, y1, x2, y2):
+    distance = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+    if distance <= 10:
+        return True
+    
+
+
 while running:
     exit_key()
     if not running:
         break
-    
     Rendering()
     Logic()
-
     frame = ( frame + 1 ) % 8
     delay(0.05)
 
