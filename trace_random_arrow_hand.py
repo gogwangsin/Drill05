@@ -2,7 +2,7 @@
 # 랜덤 손화살표를 추적하는 소년 ( 동영상 참고 )
 # ‘hand_arrow.png’ 이미지 사용 – 수업 실습 자료에 포함
 # 랜덤 위치에 손이 표시됨.(1점) O
-# 소년은 손을 따라감.(3점)
+# 소년은 손을 따라감.(3점) o
 # 손에 도착하면, 다시 손이 자동으로 랜덤 위치로 이동함.(1점)
 # 캐릭터의 바라보는 방향(좌우)을 이동 방향과 일치시켜야 함.(1점)
 
@@ -39,7 +39,7 @@ x1, y1 = TUK_WIDTH // 2 , TUK_HEIGHT // 2
 x_dir = 1
 def character_draw():
     if x_dir < 0:
-        character.clip_composite_draw(frame * 100, 100, 100, 100, 0, 'h', x1, y1)
+        character.clip_composite_draw(frame * 100, 100, 100, 100, 0, 'h', x1, y1, 100, 100)
     else:
         character.clip_draw(frame * 100, 100, 100, 100, x1, y1)
 
@@ -49,24 +49,32 @@ def arrow_draw():
     arrow.draw(x2,y2)
 
 # 거리가 100일때 delay(0.05)마다 픽셀 +8, 거리가 10일때 픽셀 0.8 [ 속력 = 거리/시간 ] 위치 = 처음위치 + 속력x시간
-# 속력x시간이 나중위치가 되면 순간이동함 ex) (거리)*1.00%
+# 속력x시간이 나중위치가 되면 순간이동함 ex) (거리)*1.00%, 1을 넘어가면 도달할 수 없음 
 def Logic():
     global x1, y1, x2, y2
 
-    t = 2  
+    t = 0.08  
     x1 += (x2 - x1) * t
     y1 += (y2 - y1) * t
+
+    set_direction()
     
-        
+def set_direction():
+    global x_dir
+    if x2 - x1 >= 0:
+        x_dir = 1
+    elif x2 - x1 < 0:
+        x_dir = -1
 
 while running:
     exit_key()
     if not running:
         break
+    
     Rendering()
     Logic()
+
     frame = ( frame + 1 ) % 8
-    # x += x_dir * 8 
     delay(0.05)
 
 close_canvas()
