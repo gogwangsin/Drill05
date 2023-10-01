@@ -7,18 +7,16 @@
 # 캐릭터의 바라보는 방향(좌우)을 이동 방향과 일치시켜야 함.(1점)
 
 from pico2d import *
+import random
 
 TUK_WIDTH, TUK_HEIGHT = 800, 800
 
 open_canvas(TUK_WIDTH, TUK_WIDTH)
 tuk_ground = load_image('TUK_GROUND_FULL.png')
 character = load_image('animation_sheet.png')
-
+arrow = load_image('hand_arrow.png')
 
 running = True
-frame = 0
-x, y = TUK_WIDTH // 2 , TUK_HEIGHT // 2
-
 def exit_key():
     global running
     events = get_events()
@@ -28,23 +26,36 @@ def exit_key():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
 
+frame = 0
+x, y = TUK_WIDTH // 2 , TUK_HEIGHT // 2
+x_dir = 1
+def character_draw():
+    if x_dir < 0:
+        character.clip_composite_draw(frame * 100, 100, 100, 100, 0, 'h', x, y)
+    else:
+        character.clip_draw(frame * 100, 100, 100, 100, x, y)
 
-# character.clip_draw(frame*100, 0, 100, 100, x, 130, 200, 200)
+# 화면 상 랜덤 위치 화살 초기화
+x2, y2 = random.randint(0, TUK_WIDTH - 1), random.randint(0, TUK_HEIGHT - 1) 
+def arrow_draw():
+    arrow.draw(x2,y2)
+
+def Rendering():
+    clear_canvas()
+    tuk_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
+    arrow_draw()
+    character_draw()
+    update_canvas()
 
 
 while running:
     exit_key()
     if not running:
         break
+    Rendering()
     
-    clear_canvas()
-    tuk_ground.draw(TUK_WIDTH // 2, TUK_HEIGHT // 2)
-    character.clip_draw( frame * 100, 100 * 1, 100, 100, x, y )
-
-
-
-    update_canvas()
     frame = ( frame + 1 ) % 8
+    # x += x_dir * 8 
     delay(0.05)
 
 close_canvas()
